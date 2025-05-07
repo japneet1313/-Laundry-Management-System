@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dewdrops - Admin</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1 class="logo">Dewdrops Admin</h1>
+            <nav>
+                <ul id="nav-links">
+                    <li><a href="#" class="active">Dashboard</a></li>
+                    <li><a href="#orders">Orders</a></li>
+                    <li><a href="#users">Users</a></li>
+                    <li><a href="#" onclick="logout()">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="admin-dashboard">
+        <div class="container">
+            <section class="stats">
+                <h2>Admin Dashboard</h2>
+                <div class="stat-cards">
+                    <div class="stat-card">
+                        <h3>Total Orders</h3>
+                        <div class="stat-value" id="total-orders">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Active Users</h3>
+                        <div class="stat-value" id="total-users">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Revenue</h3>
+                        <div class="stat-value" id="total-revenue">$0</div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="orders" class="admin-orders">
+                <h2>Order Management</h2>
+                <div class="order-filters">
+                    <select id="order-filter">
+                        <option value="all">All Orders</option>
+                        <option value="pending">Pending</option>
+                        <option value="in-progress">In Progress</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                </div>
+                <div class="orders-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Service</th>
+                                <th>Price</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-table-body">
+                            <!-- Orders will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="users" class="admin-users">
+                <h2>User Management</h2>
+                <div class="users-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Member</th>
+                                <th>Orders</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table-body">
+                            <!-- Users will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+        // Simulated data
+        const simulatedOrders = [
+            {
+                id: "ORD1001",
+                customer: "John Doe",
+                service: "Wash & Fold",
+                price: "$18.50",
+                status: "pending"
+            },
+            {
+                id: "ORD1002",
+                customer: "Jane Smith",
+                service: "Dry Cleaning",
+                price: "$45.00",
+                status: "in-progress"
+            },
+            {
+                id: "ORD1003",
+                customer: "Mike Johnson",
+                service: "Ironing",
+                price: "$12.00",
+                status: "completed"
+            }
+        ];
+
+        const simulatedUsers = [
+            {
+                id: "USR1001",
+                name: "John Doe",
+                email: "john@example.com",
+                isMember: true,
+                orders: 3
+            },
+            {
+                id: "USR1002",
+                name: "Jane Smith",
+                email: "jane@example.com",
+                isMember: false,
+                orders: 1
+            },
+            {
+                id: "USR1003",
+                name: "Mike Johnson",
+                email: "mike@example.com",
+                isMember: true,
+                orders: 5
+            }
+        ];
+
+        // Load admin dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if admin is logged in (simulated)
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            if (!user || user.email !== "admin@dewdrops.com") {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Display stats
+            document.getElementById('total-orders').textContent = simulatedOrders.length;
+            document.getElementById('total-users').textContent = simulatedUsers.length;
+            document.getElementById('total-revenue').textContent = "$" + 
+                simulatedOrders.reduce((sum, order) => sum + parseFloat(order.price.replace('$', '')), 0).toFixed(2);
+
+            // Display orders
+            const ordersTable = document.getElementById('orders-table-body');
+            simulatedOrders.forEach(order => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${order.id}</td>
+                    <td>${order.customer}</td>
+                    <td>${order.service}</td>
+                    <td>${order.price}</td>
+                    <td><span class="status ${order.status}">${order.status}</span></td>
+                    <td>
+                        <select onchange="updateOrderStatus('${order.id}', this.value)">
+                            <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>Pending</option>
+                            <option value="in-progress" ${order.status === 'in-progress' ? 'selected' : ''}>In Progress</option>
+                            <option value="completed" ${order.status === 'completed' ? 'selected' : ''}>Completed</option>
+                        </select>
+                    </td>
+                `;
+                ordersTable.appendChild(row);
+            });
+
+            // Display users
+            const usersTable = document.getElementById('users-table-body');
+            simulatedUsers.forEach(user => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${user.id}</td>
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td>${user.isMember ? 'Yes' : 'No'}</td>
+                    <td>${user.orders}</td>
+                `;
+                usersTable.appendChild(row);
+            });
+        });
+
+        function updateOrderStatus(orderId, newStatus) {
+            // In a real app, this would update the database
+            console.log(`Order ${orderId} status updated to ${newStatus}`);
+            alert(`Order ${orderId} status updated to ${newStatus}`);
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

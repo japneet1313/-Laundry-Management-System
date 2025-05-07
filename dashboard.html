@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dewdrops - Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1 class="logo">Dewdrops</h1>
+            <nav>
+                <ul id="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="#orders">My Orders</a></li>
+                    <li><a href="#profile">Profile</a></li>
+                    <li><a href="#" onclick="logout()">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="dashboard">
+        <div class="container">
+            <section class="welcome">
+                <h2>Welcome, <span id="user-name"></span>!</h2>
+                <div class="loyalty-card">
+                    <h3>Your Loyalty Points</h3>
+                    <div class="points" id="loyalty-points">0</div>
+                    <p>Every $1 spent = 1 point</p>
+                </div>
+            </section>
+
+            <section id="orders" class="orders">
+                <h2>My Orders</h2>
+                <div class="order-list" id="order-list">
+                    <!-- Orders will be populated by JavaScript -->
+                </div>
+            </section>
+
+            <section id="profile" class="profile">
+                <h2>Account Settings</h2>
+                <div class="profile-card">
+                    <div class="profile-info">
+                        <p><strong>Name:</strong> <span id="profile-name"></span></p>
+                        <p><strong>Email:</strong> <span id="profile-email"></span></p>
+                        <p><strong>Member Status:</strong> <span id="member-status"></span></p>
+                    </div>
+                    <button onclick="upgradeMembership()" id="upgrade-btn">Upgrade to Membership</button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+        // Load user data
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            if (!user) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Display user info
+            document.getElementById('user-name').textContent = user.name;
+            document.getElementById('profile-name').textContent = user.name;
+            document.getElementById('profile-email').textContent = user.email;
+            document.getElementById('loyalty-points').textContent = user.loyaltyPoints;
+            
+            const memberStatus = document.getElementById('member-status');
+            const upgradeBtn = document.getElementById('upgrade-btn');
+            
+            if (user.isMember) {
+                memberStatus.textContent = "Premium Member (10% discount)";
+                upgradeBtn.style.display = 'none';
+            } else {
+                memberStatus.textContent = "Standard Member";
+                upgradeBtn.style.display = 'block';
+            }
+
+            // Display orders (simulated)
+            const orderList = document.getElementById('order-list');
+            if (user.orders && user.orders.length > 0) {
+                user.orders.forEach(orderId => {
+                    // In a real app, we'd fetch the order details
+                    const order = {
+                        id: orderId,
+                        date: new Date().toLocaleDateString(),
+                        service: "Wash & Fold",
+                        price: "$25.00",
+                        status: "Completed"
+                    };
+                    
+                    const orderItem = document.createElement('div');
+                    orderItem.className = 'order-item';
+                    orderItem.innerHTML = `
+                        <div class="order-id">Order #${order.id}</div>
+                        <div class="order-date">${order.date}</div>
+                        <div class="order-service">${order.service}</div>
+                        <div class="order-price">${order.price}</div>
+                        <div class="order-status ${order.status.toLowerCase()}">${order.status}</div>
+                    `;
+                    orderList.appendChild(orderItem);
+                });
+            } else {
+                orderList.innerHTML = '<p>You have no orders yet.</p>';
+            }
+        });
+
+        function upgradeMembership() {
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            user.isMember = true;
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            alert("You're now a premium member! Enjoy 10% discount on all orders.");
+            window.location.reload();
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

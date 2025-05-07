@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dewdrops Laundry Service</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1 class="logo">Dewdrops</h1>
+            <nav>
+                <ul id="nav-links">
+                    <li><a href="#" class="active">Home</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li id="login-link"><a href="#" onclick="showAuthModal('login')">Login</a></li>
+                    <li id="dashboard-link" style="display:none;"><a href="dashboard.html">Dashboard</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <h2>Premium Laundry Service at Your Doorstep</h2>
+                <button class="cta-button" onclick="showOrderModal()">Schedule a Pickup</button>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services" class="services">
+            <h2>Our Services</h2>
+            <div class="service-cards">
+                <div class="card">
+                    <h3>Wash & Fold</h3>
+                    <p>From $1.50/lb</p>
+                </div>
+                <div class="card">
+                    <h3>Dry Cleaning</h3>
+                    <p>From $5/item</p>
+                </div>
+                <div class="card">
+                    <h3>Ironing</h3>
+                    <p>From $2/item</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing Calculator -->
+        <section id="pricing" class="calculator">
+            <h2>Price Calculator</h2>
+            <div class="calc-form">
+                <select id="service-type">
+                    <option value="wash">Wash & Fold</option>
+                    <option value="dry">Dry Cleaning</option>
+                    <option value="iron">Ironing</option>
+                </select>
+                <input type="number" id="item-count" placeholder="Number of items" min="1">
+                <input type="number" id="item-weight" placeholder="Weight (lbs)" min="1" step="0.1">
+                <button onclick="calculatePrice()">Estimate Price</button>
+                <div id="price-result"></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Auth Modal -->
+    <div id="auth-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div id="login-form">
+                <h2>Login</h2>
+                <input type="email" id="login-email" placeholder="Email">
+                <input type="password" id="login-password" placeholder="Password">
+                <button onclick="login()">Login</button>
+                <p>Don't have an account? <a href="#" onclick="showAuthModal('register')">Register</a></p>
+            </div>
+            <div id="register-form" style="display:none;">
+                <h2>Register</h2>
+                <input type="text" id="reg-name" placeholder="Full Name">
+                <input type="email" id="reg-email" placeholder="Email">
+                <input type="password" id="reg-password" placeholder="Password">
+                <button onclick="register()">Register</button>
+                <p>Already have an account? <a href="#" onclick="showAuthModal('login')">Login</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Modal -->
+    <div id="order-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Schedule a Pickup</h2>
+            <form id="order-form">
+                <select id="order-service">
+                    <option value="wash">Wash & Fold</option>
+                    <option value="dry">Dry Cleaning</option>
+                    <option value="iron">Ironing</option>
+                </select>
+                <input type="number" id="order-items" placeholder="Number of items" min="1">
+                <input type="number" id="order-weight" placeholder="Weight (lbs)" min="1" step="0.1">
+                <input type="datetime-local" id="pickup-time">
+                <div class="address-group">
+                    <input type="text" id="address" placeholder="Pickup Address">
+                    <input type="text" id="apt" placeholder="Apt/Suite">
+                </div>
+                <div id="price-summary"></div>
+                <button type="button" onclick="confirmOrder()">Confirm Order</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div id="payment-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Payment</h2>
+            <div class="payment-options">
+                <div class="payment-method active" onclick="selectPayment('card')">
+                    <span>💳</span> Credit Card
+                </div>
+                <div class="payment-method" onclick="selectPayment('wallet')">
+                    <span>📱</span> Mobile Wallet
+                </div>
+                <div class="payment-method" onclick="selectPayment('cash')">
+                    <span>💵</span> Cash on Delivery
+                </div>
+            </div>
+            <div id="card-details">
+                <input type="text" placeholder="Card Number">
+                <input type="text" placeholder="Expiry Date">
+                <input type="text" placeholder="CVV">
+            </div>
+            <button onclick="processPayment()">Pay Now</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
